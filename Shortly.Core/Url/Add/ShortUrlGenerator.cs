@@ -1,4 +1,4 @@
-﻿namespace Shortly.Core;
+﻿namespace Shortly.Core.Url.Add;
 
 public class ShortUrlGenerator(TokenProvider tokenProvider)
 {
