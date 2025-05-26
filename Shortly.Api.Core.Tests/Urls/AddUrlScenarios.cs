@@ -26,8 +26,8 @@ public class AddUrlScenarios
     {
         var request = CreateAddUrlRequest();
         var response = await _urlHandler.HandleAsync(request, default);
-        response.ShortUrl.Should().NotBeEmpty();
-        response.ShortUrl.Should().Be("1");
+        response.Value!.ShortUrl.Should().NotBeEmpty();
+        response.Value!.ShortUrl.Should().Be("1");
     }
 
     [Fact]
@@ -35,7 +35,8 @@ public class AddUrlScenarios
     {
         var request = CreateAddUrlRequest();
         var response = await _urlHandler.HandleAsync(request, default);
-        _urlDataStore.Should().ContainKey(response.ShortUrl);
+        response.Succeeded.Should().BeTrue();   
+        _urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
     }
     
     [Fact]
@@ -43,14 +44,25 @@ public class AddUrlScenarios
     {
         var request = CreateAddUrlRequest();
         var response = await _urlHandler.HandleAsync(request, default);
-        _urlDataStore.Should().ContainKey(response.ShortUrl);
-        _urlDataStore[response.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
-        _urlDataStore[response.ShortUrl].CreatedOn.Should().Be(_timeProvider.GetUtcNow());
+        response.Succeeded.Should().BeTrue();   
+        _urlDataStore.Should().ContainKey(response.Value!.ShortUrl);
+        _urlDataStore[response.Value!.ShortUrl].CreatedBy.Should().Be(request.CreatedBy);
+        _urlDataStore[response.Value!.ShortUrl].CreatedOn.Should().Be(_timeProvider.GetUtcNow());
     }
 
-    private static AddUrlRequest CreateAddUrlRequest()
+    [Fact]
+    public async Task Should_return_error_if_createdBy_is_empty()
     {
-        return new AddUrlRequest(new Uri("localhost"), "user@user");
+        var request = CreateAddUrlRequest();
+        var response = await _urlHandler.HandleAsync(request, default);
+        response.Succeeded.Should().BeFalse();
+        response.Error.Code.Should().Be("MISSING");
+    }
+    
+
+    private static AddUrlRequest CreateAddUrlRequest(string createdBy = "user@user")
+    {
+        return new AddUrlRequest(new Uri("localhost"), createdBy);
     }
 }
 
