@@ -1,6 +1,7 @@
 ﻿using Shortly.Core;
+using Shortly.Core.Url.Add;
 
-namespace Shortly.Api.Core.Tests;
+namespace Shortly.Api.Core.Tests.Urls;
 
 public class ShortUrlGeneratorScenarios
 {
