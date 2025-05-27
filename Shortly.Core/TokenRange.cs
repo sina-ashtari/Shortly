@@ -2,13 +2,15 @@
 
 public record TokenRange
 {
-    public long Start { get; }
-    public long End { get; }
-    
     public TokenRange(long start, long end)
     {
+        if (end < start)
+            throw new ArgumentException("End Must Be Greater Than Or Equal The Start");
+        
         Start = start;
         End = end;
     }
-    
+
+    public long Start { get; }
+    public long End { get; }
 }
