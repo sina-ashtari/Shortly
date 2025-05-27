@@ -11,9 +11,9 @@ public class AddUrlScenarios
     private readonly InMemoryUrlDataStore _urlDataStore;
     private readonly FakeTimeProvider _timeProvider;
 
-    public AddUrlScenarios(InMemoryUrlDataStore urlDataStore)
+    public AddUrlScenarios()
     {
-        _urlDataStore = urlDataStore;
+        _urlDataStore = new InMemoryUrlDataStore();
         var tokenProvider = new TokenProvider();
         tokenProvider.AssignRange(1, 5);
         var shortUrlGenerator = new ShortUrlGenerator(tokenProvider);
@@ -53,7 +53,7 @@ public class AddUrlScenarios
     [Fact]
     public async Task Should_return_error_if_createdBy_is_empty()
     {
-        var request = CreateAddUrlRequest();
+        var request = CreateAddUrlRequest("");
         var response = await _urlHandler.HandleAsync(request, default);
         response.Succeeded.Should().BeFalse();
         response.Error.Code.Should().Be("MISSING");
@@ -62,7 +62,7 @@ public class AddUrlScenarios
 
     private static AddUrlRequest CreateAddUrlRequest(string createdBy = "user@user")
     {
-        return new AddUrlRequest(new Uri("localhost"), createdBy);
+        return new AddUrlRequest(new Uri("http://localhost"), createdBy);
     }
 }
 
